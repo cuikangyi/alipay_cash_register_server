@@ -1,0 +1,185 @@
+<script language="javascript">
+    $(function(){
+        var th = $(".top").height();
+        th = 111-th;
+        var wh = $(window).height()-th;
+
+        $("#datagrid{:$uniqid}").datagrid({
+            height:wh,
+            autoRowHeight:false,
+            singleSelect:true,
+            striped:true,
+            pagination:true,
+            pageSize:20,
+            pageList:[20,40,60],
+            rownumbers:true,
+            method:'get',
+            url:"{:U('getList')}",
+            fitColumns:true,
+            nowrap:true,
+            onBeforeLoad: function () {
+
+            },
+            toolbar:$('#toolbar{:$uniqid}'),
+            columns:[[
+                {field:'id',title:'id',hidden:true},
+                {field:'subject',title:'订单名称'},
+                {field:'out_trade_no',title:'商户订单号'},
+                {field:'total_fee',title:'金额',align:'right'},
+                {field:'gmt_create',title:'创建时间'},
+                {field:'pay_status',title:'支付状态',formatter:formatPayStatus{:$uniqid},align:'center'},
+                {field:'gmt_payment',title:'付款时间',formatter:formatPayMent{:$uniqid}},
+                {field:'buyer_email',title:'顾客支付宝账号',formatter:formatBuyerID{:$uniqid}},
+                {field:'trade_no',title:'支付宝交易号'},
+                {field:'device_name',title:'收款机'},
+                {field:'cashier_name',title:'收银员'}
+            ]]
+        });
+    });
+
+    function formatPayStatus{:$uniqid}(val,row){
+        if (val == "已支付"){
+            return val;
+        } else {
+            return '<span style="color:red;">'+val+'</span>';
+        }
+    }
+
+    function formatPayMent{:$uniqid}(val,row){
+        if (val == "0000-00-00 00:00:00"){
+            return '';
+        } else {
+            return val;
+        }
+    }
+    function formatBuyerID{:$uniqid}(val,row){
+        val += '';
+        if (val.indexOf('*')>0){
+            return val;
+        } else if(val.indexOf('@')>0){
+            return val.substr(0,3) + "***" + val.substr(val.indexOf('@'));
+        } else if(val.length == 11){
+            return val.substr(0,3) + "****" + val.substr(6);
+        }else{
+            return val;
+        }
+    }
+
+    $.ajax({
+        url: '{:U("Device/getList")}',
+        success: function (data) {
+            //console.log(data.rows);
+            $('#devices{:$uniqid}').combobox({
+                data:data.rows,
+                valueField:'id',
+                textField:'device_name'
+            });
+
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+    $.ajax({
+        url: '{:U("Cashier/getList")}',
+        success: function (data) {
+            //console.log(data.rows);
+            $('#cashiers{:$uniqid}').combobox({
+                data:data.rows,
+                valueField:'id',
+                textField:'cashier_name'
+            });
+
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+
+    function doSearch{:$uniqid}(){
+        $('#datagrid{:$uniqid}').datagrid('load',{
+            start_time: $('#start_time{:$uniqid}').datebox('getValue'),
+            end_time: $('#end_time{:$uniqid}').datebox('getValue'),
+            cashier_id:$('#cashiers{:$uniqid}').combobox('getValue'),
+            device_id:$('#devices{:$uniqid}').combobox('getValue'),
+            start_fee:$('#start_fee{:$uniqid}').textbox('getValue'),
+            end_fee:$('#end_fee{:$uniqid}').textbox('getValue'),
+            search_key:$('#search_key{:$uniqid}').textbox('getValue'),
+            search_key_type:$('#search_key_type{:$uniqid}').combobox('getValue'),
+            pay_status:$('#pay_status{:$uniqid}').combobox('getValue')
+        });
+    }
+    function exportExcel{:$uniqid}(){
+        var data =
+            'start_time='+$('#start_time{:$uniqid}').datebox('getValue')
+            +'&end_time='+$('#end_time{:$uniqid}').datebox('getValue')
+            +'&cashier_id='+$('#cashiers{:$uniqid}').combobox('getValue')
+            +'&device_id='+$('#devices{:$uniqid}').combobox('getValue')
+            +'&start_fee='+$('#start_fee{:$uniqid}').textbox('getValue')
+            +'&end_fee='+$('#end_fee{:$uniqid}').textbox('getValue')
+            +'&search_key='+$('#search_key{:$uniqid}').textbox('getValue')
+            +'&search_key_type='+$('#search_key_type{:$uniqid}').combobox('getValue')
+            +'&pay_status='+$('#pay_status{:$uniqid}').combobox('getValue')
+            ;
+        window.location.href = "{:U('ExportExcel')}?"+ data;
+    }
+
+    function clear{:$uniqid}(){
+        $('#start_time{:$uniqid}').datebox('setValue','');
+        $('#end_time{:$uniqid}').datebox('setValue','');
+        $('#cashiers{:$uniqid}').combobox('setValue','');
+        $('#devices{:$uniqid}').combobox('setValue','');
+        $('#start_fee{:$uniqid}').textbox('setValue','');
+        $('#end_fee{:$uniqid}').textbox('setValue','');
+        $('#search_key{:$uniqid}').textbox('setValue','');
+        $('#pay_status{:$uniqid}').combobox('setValue','');
+    }
+
+    function reload{:$uniqid}(){
+        $("#datagrid{:$uniqid}").datagrid('reload');
+    }
+</script>
+<div class="con" id="Page{:$uniqid}">
+    <table id="datagrid{:$uniqid}"></table>
+</div>
+
+<div id="toolbar{:$uniqid}" style="padding:2px 5px;">
+    <table>
+        <tr>
+            <td>创建时间:</td>
+            <td><input class="easyui-datebox" id="start_time{:$uniqid}" style="width:110px">-<input class="easyui-datebox" id="end_time{:$uniqid}" style="width:110px"></td>
+            <td>收银员:</td>
+            <td><input id="cashiers{:$uniqid}" style="width:100px"></td>
+            <td>关键字:</td>
+            <td><input class="easyui-textbox" id="search_key{:$uniqid}" style="width:150px"></td>
+            <td>关键词类型：</td>
+            <td>
+                <select id="search_key_type{:$uniqid}" class="easyui-combobox" style="width:150px;">
+                    <option value="out_trade_no">商户订单号</option>
+                    <option value="trade_no">支付宝交易号</option>
+                    <option value="buyer_email">顾客支付宝账号</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>金额:</td>
+            <td><input class="easyui-textbox" id="start_fee{:$uniqid}" style="width:110px">-<input class="easyui-textbox" id="end_fee{:$uniqid}" style="width:110px"></td>
+            <td>收银台:</td>
+            <td><input id="devices{:$uniqid}" style="width:100px"></td>
+            <td>支付状态:</td>
+            <td>
+                <select id="pay_status{:$uniqid}" class="easyui-combobox" style="width:150px;">
+                    <option value="">全部</option>
+                    <option value="success">已付款</option>
+                    <option value="fail">未付款</option>
+                </select>
+            </td>
+            <td colspan="2" align="right">
+                <a href="#" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doSearch{:$uniqid}()">搜索</a>
+                <a href="#" class="easyui-linkbutton" iconCls="icon-no" plain="true" onclick="clear{:$uniqid}()">清空</a>
+                <a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="exportExcel{:$uniqid}()">导出</a></div>
+                <a href="#" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="reload{:$uniqid}()">刷新</a></div>
+            </td>
+        </tr>
+    </table>
+</div>

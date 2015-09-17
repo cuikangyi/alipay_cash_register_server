@@ -1,0 +1,59 @@
+<script language="javascript">
+	function onClickTree(node){
+		var id = node.id;
+		var tit = node.text;
+		var url = node.url;
+		var icon = node.iconCls;
+		//alert(url);
+		if(url){
+			addTabs(id,tit,url,icon);
+		}
+	}
+
+	var idd = '';
+	var tit = '';
+	var url = '';
+	var icon = '';
+	function addTabs(id,tit,url,icon){
+		$(function(){
+            var ishas = $("#rightTabs").tabs('exists',tit);
+            if(!ishas){
+                //$.messager.alert('提示',ishas);
+                $("#rightTabs").tabs('add',{
+                    id : idd,
+                    title : tit,
+                    href : url,
+                    closable : true,
+                    iconCls : icon
+                });
+            }else{
+                $("#rightTabs").tabs('select',tit);
+            }
+		});
+	}
+</script>
+<div id="leftMenu" data-options="fit:false,border:false">
+    <ul id="tt_leftMenu" class="easyui-tree" data-options="editable:false,lines:true,onClick:function(node){onClickTree(node);}">
+        <li>
+            <span>订单管理</span>
+            <ul>
+                <li data-options="text:'订单查询',url:'{:U('Order/index')}',editable:false,lines:true,method:'get',onClick:function(node){onClickTree(node);}">订单查询</li>
+                <li data-options="text:'统计',url:'{:U('Order/countIndex')}',editable:false,lines:true,method:'get',onClick:function(node){onClickTree(node);}">统计</li>
+            </ul>
+        </li>
+        <li>
+            <span>收款机/员管理</span>
+            <ul>
+                <li data-options="text:'收款机管理',url:'{:U('Device/index')}',editable:false,lines:true,method:'get',onClick:function(node){onClickTree(node);}">收款机管理</li>
+                <li data-options="text:'收银员管理',url:'{:U('Cashier/index')}',editable:false,lines:true,method:'get',onClick:function(node){onClickTree(node);}">收银员管理</li>
+            </ul>
+        </li>
+        <li>
+            <span>信息设置</span>
+            <ul>
+                <li data-options="text:'商户信息管理',url:'{:U('Config/index')}',editable:false,lines:true,method:'get',onClick:function(node){onClickTree(node);}">商户信息管理</li>
+                <li data-options="text:'安全设置',url:'{:U('Safe/index')}',editable:false,lines:true,method:'get',onClick:function(node){onClickTree(node);}">安全设置</li>
+            </ul>
+        </li>
+    </ul>
+</div>

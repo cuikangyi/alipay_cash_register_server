@@ -1,0 +1,109 @@
+<script language="javascript">
+    $(function(){
+        $("#dg_all{:$uniqid}").datagrid({
+            singleSelect:true,
+            striped:true,
+            //rownumbers:true,
+            method:'get',
+            url:"{:U('countOrderAll')}",
+            fitColumns:true,
+            nowrap:true,
+            columns:[[
+                {field:'total_fee',title:'金额'},
+                {field:'nums',title:'数量'},
+            ]]
+        });
+        $("#dg_device{:$uniqid}").datagrid({
+            singleSelect:true,
+            striped:true,
+            rownumbers:true,
+            method:'get',
+            url:"{:U('countOrderDevice')}",
+            //fitColumns:true,
+            nowrap:true,
+            columns:[[
+                {field:'device_name',title:'名称'},
+                {field:'total_fee',title:'金额'},
+                {field:'nums',title:'数量'},
+            ]]
+        });
+        $("#dg_cashier{:$uniqid}").datagrid({
+            singleSelect:true,
+            striped:true,
+            rownumbers:true,
+            method:'get',
+            url:"{:U('countOrderCashier')}",
+            //fitColumns:true,
+            nowrap:true,
+            columns:[[
+                {field:'cashier_name',title:'姓名'},
+                {field:'total_fee',title:'金额'},
+                {field:'nums',title:'数量'},
+            ]]
+        });
+    });
+
+
+ /*   $.ajax({
+        url: '{:U("User/getList")}',
+        success: function (data) {
+            //console.log(data.rows);
+            $('#users{:$uniqid}').combobox({
+                data:data.rows,
+                valueField:'id',
+                textField:'name'
+            });
+
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });*/
+
+    function doSearch{:$uniqid}(){
+        $('#dg_all{:$uniqid}').datagrid('load',{
+            start_time: $('#start_time{:$uniqid}').datebox('getValue'),
+            end_time: $('#end_time{:$uniqid}').datebox('getValue')
+        });
+        $('#dg_device{:$uniqid}').datagrid('load',{
+            start_time: $('#start_time{:$uniqid}').datebox('getValue'),
+            end_time: $('#end_time{:$uniqid}').datebox('getValue')
+        });
+        $('#dg_cashier{:$uniqid}').datagrid('load',{
+            start_time: $('#start_time{:$uniqid}').datebox('getValue'),
+            end_time: $('#end_time{:$uniqid}').datebox('getValue')
+        });
+    }
+
+    function clear{:$uniqid}(){
+        $('#start_time{:$uniqid}').datebox('setValue','');
+        $('#end_time{:$uniqid}').datebox('setValue','');
+    }
+
+</script>
+
+<div id="Page{:$uniqid}" class="easyui-layout" data-options="fit:true" >
+    <div data-options="region:'north',split:true,collapsible:false" style="height:35px;">
+        <div id="toolbar{:$uniqid}" style="padding:2px 5px;">
+            <span>创建时间:
+                <input class="easyui-datebox" id="start_time{:$uniqid}" style="width:110px">
+                -
+                <input class="easyui-datebox" id="end_time{:$uniqid}" style="width:110px">
+            </span>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doSearch{:$uniqid}()">搜索</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-no" plain="true" onclick="clear{:$uniqid}()">清空</a>
+        </div>
+    </div>
+    <div data-options="region:'west',title:'汇总',split:true,collapsible:false" style="width:33%;">
+        <table id="dg_all{:$uniqid}"></table>
+    </div>
+    <div data-options="region:'center',title:'收款机',split:true,collapsible:false" style="width:33%;">
+        <table id="dg_device{:$uniqid}"></table>
+    </div>
+    <div data-options="region:'east',title:'收银员',split:true,collapsible:false" style="width:33%;">
+        <table id="dg_cashier{:$uniqid}"></table>
+    </div>
+</div>
+
+
+

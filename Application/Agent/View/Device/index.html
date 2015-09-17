@@ -1,0 +1,82 @@
+<script language="javascript">
+    $(function(){
+        var th = $(".top").height();
+        th = 111-th;
+        var wh = $(window).height()-th;
+
+        $("#datagrid{:$uniqid}").datagrid({
+            //title:'角色列表',
+            height:wh,
+            autoRowHeight:false,
+            singleSelect:true,
+            striped:true,
+            pagination:true,
+            pageSize:20,
+            pageList:[20,40,60],
+            rownumbers:true,
+            method:'get',
+            url:"{:U('getList')}",
+            fitColumns:true,
+            nowrap:true,
+            onBeforeLoad: function () {
+
+            },
+            toolbar:$('#toolbar{:$uniqid}'),
+            columns:[[
+                {field:'id',title:'id',hidden:true},
+                {field:'device_name',title:'名称',width:100},
+                {field:'device_no',title:'机器码',width:250},
+                {field:'status',title:'状态',formatter:formatStatus,align:'center',width:90},
+                {field:'user_name',title:'所属商户',width:100},
+            ]]
+        });
+    });
+
+    function formatStatus(val,row){
+        if (val == 1){
+            return '已启用';
+        } else {
+            return '<span style="color:red;">'+'已禁用'+'</span>';;
+        }
+    }
+
+    $.ajax({
+        url: '{:U("User/getList")}',
+        success: function (data) {
+            //console.log(data.rows);
+            $('#users{:$uniqid}').combobox({
+                data:data.rows,
+                valueField:'id',
+                textField:'name'
+            });
+
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+
+    function doSearch{:$uniqid}(){
+        $('#datagrid{:$uniqid}').datagrid('load',{
+            uid:$('#users{:$uniqid}').combobox('getValue')
+        });
+    }
+
+    function clear{:$uniqid}(){
+        $('#users{:$uniqid}').combobox('setValue','');
+    }
+
+    function reload{:$uniqid}(){
+        $("#datagrid{:$uniqid}").datagrid('reload');
+    }
+</script>
+<div class="con" id="Page{:$uniqid}">
+    <table id="datagrid{:$uniqid}"></table>
+</div>
+
+<div id="toolbar{:$uniqid}" style="padding:2px 5px;">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="reload{:$uniqid}()">刷新</a>
+    <span>商户:<input id="users{:$uniqid}" value="" style="width:100px"></span>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doSearch{:$uniqid}()">搜索</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-no" plain="true" onclick="clear{:$uniqid}()">清空</a>
+</div>

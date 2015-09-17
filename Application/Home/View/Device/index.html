@@ -1,0 +1,155 @@
+<script language="javascript">
+    $(function(){
+        var th = $(".top").height();
+        th = 111-th;
+        var wh = $(window).height()-th;
+
+        $("#datagrid{:$uniqid}").datagrid({
+            //title:'角色列表',
+            height:wh,
+            autoRowHeight:false,
+            singleSelect:true,
+            striped:true,
+            pagination:true,
+            pageSize:20,
+            pageList:[20,40,60],
+            rownumbers:true,
+            method:'get',
+            url:'{:U("getList")}',
+            fitColumns:true,
+            nowrap:true,
+            onBeforeLoad: function () {
+
+            },
+            onDblClickRow:function(e,rowIndex,rowData){
+                var se = $(this).datagrid('getSelected');
+                var idd = se['id'];
+                console.log(idd);
+                if(idd>0){
+                    $("#dialog{:$uniqid}").dialog({
+                        title:'编辑角色',
+                        resizable:true,
+                        width:450,
+                        height:210,
+                        href:'{:U("edit")}?id='+idd,
+                        onOpen:function(){
+                            cancel['Device'] = $(this);
+                        },
+                        onClose:function(){
+                            cancel['Device'] = null;
+                        }
+                    });
+                }
+            },
+            toolbar:[{
+                iconCls: 'icon-add',
+                text : '新增',
+                handler: function(){
+                    $("#dialog{:$uniqid}").dialog({
+                        title:'新增角色',
+                        resizable:true,
+                        width:450,
+                        height:210,
+                        href:'{:U("add")}',
+                        onOpen:function(){
+                            cancel['Device'] = $(this);
+                        },
+                        onClose:function(){
+                            cancel['Device'] = null;
+                        }
+                    });
+                }
+            },'-',{
+                iconCls: 'icon-edit',
+                text : '编辑',
+                handler: function(){
+                    var se = $("#datagrid{:$uniqid}").datagrid('getSelected');
+                    if(se == null){
+                        $.messager.alert('提示',"请先选择或直接双击的要修改的数据",'info');
+                        return;
+                    }
+                    var idd = se['id'];
+                    if(idd>0){
+                        $("#dialog{:$uniqid}").dialog({
+                            title:'编辑角色',
+                            resizable:true,
+                            width:450,
+                            height:210,
+                            href:'{:U("edit")}?id='+idd,
+                            onOpen:function(){
+                                cancel['Device'] = $(this);
+                            },
+                            onClose:function(){
+                                cancel['Device'] = null;
+                            }
+                        });
+                    }
+                }
+            },'-',{
+                iconCls: 'icon-edit',
+                text : '删除',
+                handler: function() {
+                    var se = $("#datagrid{:$uniqid}").datagrid('getSelected');
+                    if (se == null) {
+                        $.messager.alert('提示', "请先选择要删除的数据", 'info');
+                        return;
+                    }
+                    $.messager.confirm('提示', '您真的确定要删除吗?', function(r){
+                        if (r) {
+                            var idd = se['id'];
+                            if (idd > 0) {
+                                $.ajax({
+                                    type: "post",
+                                    url: '{:U("remove")}',
+                                    data: "id=" + idd,
+                                    success: function (data) {
+                                        console.log(data.success);
+                                        if (data.success) {
+                                            $.messager.alert('提示','删除成功！','info');
+                                            $('#datagrid{:$uniqid}').datagrid('reload');
+                                        }else{
+                                            $.messager.alert('提示',data.message,'warning');
+                                        }
+                                    },
+                                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                        alert(errorThrown);
+                                    }
+                                });
+                            }
+                        }else{
+                            $.messager.alert('提示','已取消！','info');
+                        }
+                    });
+
+
+                }
+            },'-',{
+                iconCls: 'icon-reload',
+                text : '刷新',
+                handler: function(){
+                    $("#datagrid{:$uniqid}").datagrid('reload');
+                }
+            }
+            ],
+            columns:[[
+                {field:'id',title:'id',hidden:true},
+                {field:'device_name',title:'名称',width:150},
+                {field:'device_no',title:'机器码',width:150},
+                {field:'status',title:'状态',formatter:formatStatus{:$uniqid},align:'center',width:90},
+            ]]
+        });
+    });
+
+    function formatStatus{:$uniqid}(val,row){
+        if (val == 1){
+            return '已启用';
+        } else {
+            return '<span style="color:red;">'+'已禁用'+'</span>';;
+        }
+    }
+
+</script>
+<div class="con" id="Page{:$uniqid}">
+    <table id="datagrid{:$uniqid}"></table>
+</div>
+<div id="dialog{:$uniqid}" val="{:$uniqid}"></div>

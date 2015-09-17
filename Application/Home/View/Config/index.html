@@ -1,0 +1,61 @@
+<form class="easyui-form" id="ff_config" method="post" data-options="novalidate:true">
+    <input type="hidden" name="id" data-options="required:true">
+    <table cellpadding="6">
+        <tr>
+            <td>商户名称:</td>
+            <td><input class="easyui-textbox" type="text" name="pname" data-options="required:true"></td>
+        </tr>
+        <tr>
+            <td>支付宝账号:</td>
+            <td><input class="easyui-textbox" type="text" name="email" data-options="required:true"></td>
+        </tr>
+        <tr>
+            <td>商户PID:</td>
+            <td><input class="easyui-textbox" type="text" name="partner" data-options="required:true"></td>
+        </tr>
+        <tr>
+            <td>商户KEY:</td>
+            <td><input class="easyui-textbox" type="password" name="pkey" data-options="required:true"></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center"><div id="config_msg" align="center" style="color:red;"></div></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center"><a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="setConfig()">确定</a></td>
+        </tr>
+    </table>
+</form>
+
+<script>
+    $.ajax({
+        url: '{:U("Config/getConfig")}',
+        success: function (data) {
+            //console.log(data);
+            var data = eval('(' + data + ')');
+            if(data.success){
+                $('#ff_config').form('load', data.config);
+            }
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+
+    function setConfig(){
+        var msg = $('#config_msg');
+        $('#ff_config').form('submit', {
+            url:'{:U("Config/setConfig")}',
+            onSubmit: function(){
+                return $(this).form('enableValidation').form('validate');
+            },
+            success: function(data){
+                var data = eval('(' + data + ')');
+                if(data.success){
+                    console.log(data);
+                    msg.html('配置成功');
+                }
+            }
+        });
+    }
+
+</script>

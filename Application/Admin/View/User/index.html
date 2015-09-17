@@ -1,0 +1,150 @@
+<script language="javascript">
+    $(function(){
+        var th = $(".top").height();
+        th = 111-th;
+        var wh = $(window).height()-th;
+
+        $("#datagrid{:$uniqid}").datagrid({
+            //title:'角色列表',
+            height:wh,
+            autoRowHeight:false,
+            singleSelect:true,
+            striped:true,
+            pagination:true,
+            pageSize:20,
+            pageList:[20,40,60],
+            rownumbers:true,
+            method:'get',
+            url:'{:U("getList")}',
+            fitColumns:true,
+            nowrap:true,
+            onBeforeLoad: function () {
+
+            },
+            onDblClickRow:function(e,rowIndex,rowData){
+                var se = $(this).datagrid('getSelected');
+                var idd = se['id'];
+                //console.log(idd);
+                if(idd>0){
+                    $("#dialog{:$uniqid}").dialog({
+                        title:'编辑角色',
+                        resizable:true,
+                        width:450,
+                        height:210,
+                        href:'{:U("edit")}?id='+idd,
+                        onOpen:function(){
+                            cancel['User'] = $(this);
+                        },
+                        onClose:function(){
+                            cancel['User'] = null;
+                        }
+                    });
+                }
+            },
+            toolbar:'#toolbar{:$uniqid}',
+            columns:[[
+                {field:'id',title:'id',hidden:true},
+                {field:'name',title:'名称',width:150},
+                {field:'username',title:'用户名',width:150},
+                {field:'agent_name',title:'代理商',width:150},
+                {field:'status',title:'状态',formatter:formatStatus{:$uniqid},align:'center',width:90},
+            ]]
+        });
+    });
+
+    function formatStatus{:$uniqid}(val,row){
+        if (val == 1){
+            return '已启用';
+        } else {
+            return '<span style="color:red;">'+'已禁用'+'</span>';;
+        }
+    }
+
+    function add{:$uniqid}(){
+        $("#dialog{:$uniqid}").dialog({
+            title:'新增角色',
+            resizable:true,
+            width:450,
+            height:210,
+            href:'{:U("add")}',
+            onOpen:function(){
+                cancel['User'] = $(this);
+            },
+            onClose:function(){
+                cancel['User'] = null;
+            }
+        });
+    }
+
+    function edit{:$uniqid}(){
+        var se = $("#datagrid{:$uniqid}").datagrid('getSelected');
+        if(se == null){
+            $.messager.alert('提示',"请先选择或直接双击的要修改的数据",'info');
+            return;
+        }
+        var idd = se['id'];
+        if(idd>0){
+            $("#dialog{:$uniqid}").dialog({
+                title:'编辑角色',
+                resizable:true,
+                width:450,
+                height:210,
+                href:'{:U("edit")}?id='+idd,
+                onOpen:function(){
+                    cancel['User'] = $(this);
+                },
+                onClose:function(){
+                    cancel['User'] = null;
+                }
+            });
+        }
+    }
+
+    $.ajax({
+        url: '{:U("Agent/getList")}',
+        success: function (data) {
+            //console.log(data.rows);
+            var c = {"id":"0","name":"XX公司"};
+            if(data.rows != 0){
+                data.rows.push(c);
+            }else{
+                data.rows = c;
+            }
+            $('#agents{:$uniqid}').combobox({
+                data:data.rows,
+                valueField:'id',
+                textField:'name'
+            });
+
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+
+    function doSearch{:$uniqid}(){
+        $('#datagrid{:$uniqid}').datagrid('load',{
+            agent_id:$('#agents{:$uniqid}').combobox('getValue')
+        });
+    }
+
+    function clear{:$uniqid}(){
+        $('#agents{:$uniqid}').combobox('setValue','');
+    }
+
+    function reload{:$uniqid}(){
+        $("#datagrid{:$uniqid}").datagrid('reload');
+    }
+</script>
+<div class="con" id="Page{:$uniqid}">
+    <table id="datagrid{:$uniqid}"></table>
+</div>
+<div id="toolbar{:$uniqid}" style="padding:2px 5px;">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="add{:$uniqid}()">新增</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="edit{:$uniqid}()">编辑</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="reload{:$uniqid}()">刷新</a>
+    <span>代理商:<input id="agents{:$uniqid}" value="" style="width:100px"></span>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doSearch{:$uniqid}()">搜索</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-no" plain="true" onclick="clear{:$uniqid}()">清空</a>
+</div>
+<div id="dialog{:$uniqid}" val="{:$uniqid}"></div>

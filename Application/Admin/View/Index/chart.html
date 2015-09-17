@@ -1,0 +1,102 @@
+<div style="width: 100%">
+    <h4>交易变换曲线</h4>
+    <script src="__STATIC__/Chart/Chart.min.js"></script>
+        <div style="width: auto">
+            <div style="width: 30%;float: left">
+                <h5>交易金额</h5>
+                <canvas id="myChart2"></canvas>
+            </div>
+            <div style="width: 30%; float: left;margin-left: 5%">
+                <h5>交易笔数</h5>
+                <canvas id="myChart1"></canvas>
+            </div>
+        </div>
+    <script>
+        $.ajax({
+            url: '{:U("chartData")}',
+            success: function (data) {
+                //console.log(data);
+                setNumber(data);
+                if(data.list){
+                    chart(data.list);
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        });
+
+        function setNumber(data){
+            $("#day_count").text(data.day_count);
+            $("#day_fee").text(data.day_fee);
+            $("#total_count").text(data.total_count);
+            $("#total_fee").text(data.total_fee);
+        }
+
+        function chart(list) {
+            var labels = new Array();
+            var count = new Array();
+            var total_fee = new Array();
+            list.reverse();
+            $.each(list, function (key, value) {
+                //console.log(list[key]);
+                labels[key] = value['days'];
+                count[key] = Number(value['nums']);
+                total_fee[key] = Number(value['total_fee']);
+            });
+
+
+            var lineChartData1 = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "交易笔数",
+                        fillColor: "rgba(220,220,220,0.2)",
+                        strokeColor: "rgba(220,220,220,1)",
+                        pointColor: "rgba(220,220,220,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(220,220,220,1)",
+                        data: count
+                    }
+                ]
+            }
+            var lineChartData2 = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "交易金额",
+                        fillColor: "rgba(151,187,205,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data: total_fee
+                    }
+                ]
+            }
+
+            var ctx1 = document.getElementById("myChart1").getContext("2d");
+            window.myLine = new Chart(ctx1).Line(lineChartData1, {
+                responsive: true
+            });
+            var ctx2 = document.getElementById("myChart2").getContext("2d");
+            window.myLine = new Chart(ctx2).Line(lineChartData2, {
+                responsive: true
+            });
+        }
+
+    </script>
+</div>
+<div style="width: 100%;float: left">
+    <span>图例：</span>
+    <span style="background-color: rgba(151,187,205,1);">交易金额</span>
+    <span style="background-color: rgba(220,220,220,1);">交易笔数</span>
+    <span>注：缺失的日期说明这天没有任何交易</span>
+    <p></p>
+</div>
+<div style="width: 100%;float: left">
+    <h4>当日交易量：<strong id="day_count"></strong>笔，当日交易额：<strong id="day_fee"></strong>元；总交易量：<strong id="total_count"></strong>笔，总交易额：<strong id="total_fee"></strong>元</h4>
+    <p>平台数据仅供参考，如需准确数据请到订单查询中查看，或登录<a href="http://www.alipay.com">www.alipay.com(支付宝)</a>查询</p>
+</div>

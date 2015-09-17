@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<updateFiles>
+  <file path="Yunfu.exe" url="http://YOUR DOMIANS/yunfu/Yunfu.exe" lastver="0.9.8.3" size="257536" needRestart="false" />
+  <file path="YunfuBLL.dll" url="http://YOUR DOMIANS/yunfu/YunfuBLL.dll" lastver="0.9.8.2" size="7168" needRestart="false" />
+  <file path="YunfuDAL.dll" url="http://YOUR DOMIANS/yunfu/YunfuDAL.dll" lastver="0.9.8.2" size="8704" needRestart="false" />
+  <file path="YunfuModel.dll" url="http://YOUR DOMIANS/yunfu/YunfuModel.dll" lastver="0.9.8.2" size="6656" needRestart="false" />
+  <file path="YunfuTools.dll" url="http://YOUR DOMIANS/yunfu/YunfuTools.dll" lastver="0.9.8.2" size="12288" needRestart="false" />
+</updateFiles>

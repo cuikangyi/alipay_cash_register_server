@@ -1,0 +1,55 @@
+<script language="javascript">
+
+    function onSubmit{$uniqid}(){
+        $("#form{$uniqid}").form('submit',{
+            url:"{:U('add')}",
+            onSubmit: function(){
+                return $(this).form('enableValidation').form('validate');
+            },
+            success:function(data){
+                data = JSON.parse(data);
+                if(data.success){
+                    $.messager.alert('提示','新增数据成功！','info');
+                    var dguniqid = cancel['Cashier'].attr('val');
+                    $("#datagrid"+dguniqid).datagrid('reload');
+                }else{
+                    $.messager.alert('提示',data.message,'warning');
+                }
+            }
+        });
+    }
+
+    function onReset{$uniqid}(){
+        cancel['Cashier'].dialog('close');
+        cancel['Cashier'] = null;
+    }
+</script>
+<div class="con-tb">
+    <form id="form{$uniqid}" class="easyui-form" method="post" data-options="novalidate:true">
+        <table class="infobox" width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td width="28%"><label for="cashier_name">姓名:</label></td>
+                <td width="72%">
+                    <input name="cashier_name" class="easyui-textbox" type="text" size="22" data-options="required:true,validType:'name'" />
+                </td>
+            </tr>
+            <tr>
+                <td width="28%"><label for="cashier_no">编号:</label></td>
+                <td width="72%">
+                    <input name="cashier_no" class="easyui-textbox" type="text" size="22" data-options="required:true,validType:'en_num'" />
+                </td>
+            </tr>
+            <tr>
+                <td width="28%"><label for="password">密码:</label></td>
+                <td width="72%"><input name="password" type="password" class="easyui-textbox" size="22" data-options="required:true,validType:'en_num'"/></td>
+            </tr>
+            <tr>
+                <td height="38" colspan="2" align="center">
+                    <a href="javascript:void(0);" onclick="javascript:onSubmit{$uniqid}()" id="su" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+                    &nbsp;
+                    <a href="javascript:void(0);" onclick="javascript:onReset{$uniqid}()" id="re" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">关闭</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

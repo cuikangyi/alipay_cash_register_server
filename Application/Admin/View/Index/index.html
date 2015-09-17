@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>云付管理平台</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/easyui/themes/icon.css">
+
+    <script type="text/javascript" src="__STATIC__/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="__STATIC__/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="__STATIC__/easyui/easyui-lang-zh_CN.js"></script>
+
+    <script type="text/javascript" src="__JS__/validate.js"></script>
+    <link rel="stylesheet" type="text/css" href="__CSS__/index.css">
+
+    <script type="text/javascript">
+        var cancel = new Array();
+
+        $(function(){
+            $('#tabs_main').tabs({
+                onLoad:function(panel){
+                    var plugin = panel.panel('options').title;
+                    panel.find('textarea[name="code-'+plugin+'"]').each(function(){
+                        var data = $(this).val();
+                        data = data.replace(/(\r\n|\r|\n)/g, '\n');
+                        if (data.indexOf('\t') == 0){
+                            data = data.replace(/^\t/, '');
+                            data = data.replace(/\n\t/g, '\n');
+                        }
+                        data = data.replace(/\t/g, '    ');
+                        var pre = $('<pre name="code" class="prettyprint linenums"></pre>').insertAfter(this);
+                        pre.text(data);
+                        $(this).remove();
+                    });
+                }
+            });
+        });
+        function opentab(plugin,url){
+            if ($('#rightTabs').tabs('exists',plugin)){
+                $('#rightTabs').tabs('select', plugin);
+            } else {
+                $('#rightTabs').tabs('add',{
+                    title:plugin,
+                    href:"{:C('SITEURL')}"+url,
+                    closable:true
+                });
+            }
+        }
+
+        function toRepwd(){
+            $(function(){
+                var idd = "{:$login['id']}";
+                $("#repwd").dialog({
+                    title:'修改密码',
+                    resizable:true,
+                    width:400,
+                    height:300,
+                    href:'{:U("Safe/index")}?id='+idd
+                });
+            });
+        }
+
+    </script>
+</head>
+<body class="easyui-layout">
+<div class="top" id="topBg" data-options="region:'north',border:false">
+    <include file="top" />
+</div>
+<div data-options="region:'west',split:true,title:'菜单'" style="width:165px;">
+    <include file="left" />
+</div>
+<div data-options="region:'center',split:true">
+    <div id="rightTabs" class="easyui-tabs" data-options="fit:true,border:false">
+        <div title="首页" data-options="closable:false,id:-3,href:'{:U('index/chart')}'"></div>
+    </div>
+</div>
+<div id="repwd"></div>
+<div id="setpwd"></div>
+</body>
+</html>

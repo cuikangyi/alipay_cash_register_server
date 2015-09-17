@@ -1,0 +1,56 @@
+<script language="javascript">
+    $(function(){
+        var th = $(".top").height();
+        th = 111-th;
+        var wh = $(window).height()-th;
+        $("#datagrid{:$uniqid}").datagrid({
+            height:wh,
+            autoRowHeight:false,
+            singleSelect:true,
+            striped:true,
+            //pagination:true,
+            //pageSize:40,
+            //pageList:[20,40,60],
+            rownumbers:true,
+            method:'get',
+            url:"{:U('countOrder')}",
+            //fitColumns:true,
+            nowrap:true,
+            onBeforeLoad: function () {
+
+            },
+            toolbar:$('#toolbar{:$uniqid}'),
+            columns:[[
+                //{field:'id',title:'id',hidden:true},
+                {field:'user_name',title:'商户',width:120},
+                {field:'total_fee',title:'交易金额',width:180},
+                {field:'nums',title:'订单数量',width:150},
+            ]]
+        });
+    });
+
+    function doSearch{:$uniqid}(){
+        $('#datagrid{:$uniqid}').datagrid('load',{
+            start_time: $('#start_time{:$uniqid}').datebox('getValue'),
+            end_time: $('#end_time{:$uniqid}').datebox('getValue')
+        });
+    }
+
+    function clear{:$uniqid}(){
+        $('#start_time{:$uniqid}').datebox('setValue','');
+        $('#end_time{:$uniqid}').datebox('setValue','');
+    }
+
+</script>
+<div class="con" id="Page{:$uniqid}">
+    <table id="datagrid{:$uniqid}"></table>
+</div>
+
+<div id="toolbar{:$uniqid}" style="padding:2px 5px;">
+    创建时间:
+    <input class="easyui-datebox" id="start_time{:$uniqid}" style="width:110px">
+    -
+    <input class="easyui-datebox" id="end_time{:$uniqid}" style="width:110px">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doSearch{:$uniqid}()">搜索</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-no" plain="true" onclick="clear{:$uniqid}()">清空</a>
+</div>
